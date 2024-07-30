@@ -1,0 +1,134 @@
+<!DOCTYPE HTML>
+<meta charset="utf-8">
+<html>
+<head>
+    <title>인원수 체크</title>
+    <style>
+        .container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        iframe {
+            width: 50px;
+            height: 25px;
+            border: 1px solid #ccc;
+            margin-right: 5px;
+            text-align: center;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>한여름의 서울시립과학관</h1>
+    <p>참여 인원 체크 시스템</p>
+
+    <div class="container">
+        <iframe id="adult-male-count" srcdoc="0"></iframe>
+        <button id="adult-male">성인 남성 +</button>
+        <button id="adult-male-decrease">성인 남성 -</button>
+    </div>
+    <div class="container">
+        <iframe id="adult-female-count" srcdoc="0"></iframe>
+        <button id="adult-female">성인 여성 +</button>
+        <button id="adult-female-decrease">성인 여성 -</button>
+    </div>
+    <div class="container">
+        <iframe id="student-male-count" srcdoc="0"></iframe>
+        <button id="student-male">청소년 남성 +</button>
+        <button id="student-male-decrease">청소년 남성 -</button>
+    </div>
+    <div class="container">
+        <iframe id="student-female-count" srcdoc="0"></iframe>
+        <button id="student-female">청소년 여성 +</button>
+        <button id="student-female-decrease">청소년 여성 -</button>
+    </div>
+    <div class="container">
+        <iframe id="youth-male-count" srcdoc="0"></iframe>
+        <button id="youth-male">어린이 남성 +</button>
+        <button id="youth-male-decrease">어린이 남성 -</button>
+    </div>
+    <div class="container">
+        <iframe id="youth-female-count" srcdoc="0"></iframe>
+        <button id="youth-female">어린이 여성 +</button>
+        <button id="youth-female-decrease">어린이 여성 -</button>
+    </div>
+
+    <button id="submit">제출</button>
+    <button id="view-counts">인원수 확인</button>
+    <button id="reset">초기화</button>
+
+    <script>
+        let counts = {
+            'adult-male': 0,
+            'adult-female': 0,
+            'student-male': 0,
+            'student-female': 0,
+            'youth-male': 0,
+            'youth-female': 0
+        };
+
+        function updateCounts(type, change) {
+            if (counts[type] + change >= 0) {
+                counts[type] += change;
+                document.getElementById(`${type}-count`).srcdoc = counts[type];
+            }
+        }
+
+        document.getElementById('adult-male').addEventListener('click', () => updateCounts('adult-male', 1));
+        document.getElementById('adult-male-decrease').addEventListener('click', () => updateCounts('adult-male', -1));
+        
+        document.getElementById('adult-female').addEventListener('click', () => updateCounts('adult-female', 1));
+        document.getElementById('adult-female-decrease').addEventListener('click', () => updateCounts('adult-female', -1));
+
+        document.getElementById('student-male').addEventListener('click', () => updateCounts('student-male', 1));
+        document.getElementById('student-male-decrease').addEventListener('click', () => updateCounts('student-male', -1));
+        
+        document.getElementById('student-female').addEventListener('click', () => updateCounts('student-female', 1));
+        document.getElementById('student-female-decrease').addEventListener('click', () => updateCounts('student-female', -1));
+        
+        document.getElementById('youth-male').addEventListener('click', () => updateCounts('youth-male', 1));
+        document.getElementById('youth-male-decrease').addEventListener('click', () => updateCounts('youth-male', -1));
+        
+        document.getElementById('youth-female').addEventListener('click', () => updateCounts('youth-female', 1));
+        document.getElementById('youth-female-decrease').addEventListener('click', () => updateCounts('youth-female', -1));
+
+        document.getElementById('submit').addEventListener('click', () => {
+            localStorage.setItem('counts', JSON.stringify(counts));
+            alert('인원수가 저장되었습니다.');
+        });
+
+        document.getElementById('view-counts').addEventListener('click', () => {
+            let savedCounts = JSON.parse(localStorage.getItem('counts'));
+            let message = `성인 남성: ${savedCounts['adult-male']}\n성인 여성: ${savedCounts['adult-female']}\n청소년 남성: ${savedCounts['student-male']}\n청소년 여성: ${savedCounts['student-female']}\n어린이 남성: ${savedCounts['youth-male']}\n어린이 여성: ${savedCounts['youth-female']}`;
+            alert(message);
+        });
+
+        document.getElementById('reset').addEventListener('click', () => {
+            counts = {
+                'adult-male': 0,
+                'adult-female': 0,
+                'student-male': 0,
+                'student-female': 0,
+                'youth-male': 0,
+                'youth-female': 0
+            };
+            for (let type in counts) {
+                document.getElementById(`${type}-count`).srcdoc = counts[type];
+            }
+            localStorage.setItem('counts', JSON.stringify(counts));
+            alert('인원수가 초기화되었습니다.');
+        });
+
+        window.onload = () => {
+            let savedCounts = JSON.parse(localStorage.getItem('counts'));
+            if (savedCounts) {
+                counts = savedCounts;
+                for (let type in counts) {
+                    document.getElementById(`${type}-count`).srcdoc = counts[type];
+                }
+            }
+        };
+    </script>
+</body>
+</html>
